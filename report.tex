@@ -57,41 +57,16 @@ Kaj Oudshoorn \\
 }
 
 \maketitle
-\begin{abstract}
-Abstractive stuff
-\end{abstract}
 
-\section{Introduction}
+\include{sections/abstract}
 
-\section{Monte Carlo Tree Search}
+\include{sections/introduction}
 
-Monte Carlo Tree Search is a heuristic algorithm that is used for online planning. It is easiest explained in relation to games. Take for example a game of chess. The goal is to capture the opponents king while keeping your own king safe. However, in order to obtain that goal a number of moves have to be made by you and your opponent alternatively. Deciding which move to make, given the state of the game is key to winning the game. Moves can have direct rewards (like the capture of an opponents piece), but in general the effect of a move is only noticed a few turns after it has been made. For this reason it is hard to estimate how good a move is, without thinking a few steps ahead. Thinking ahead is, however, considerably hard, given the number of options a player has each turn. At the start of the game, a player can make 20 different moves (sixteen with pawns, four with knights), likewise his opponent also has 20 different moves, resulting in 400 possibilities in the first two moves alone. %TODO
+\include{sections/mcts}
 
-Instead of looking through all the combinations of actions and observations, MCTS iteratively samples a selected number of actions and evaluates them through simulation. The resulting value is propagated back through the tree and updates the expected value of each action. After a number of these iterations (called simulations), the action with the highest expected reward is performed (followed by an observation) and the algorithm continues with the obtained state in order to decide the next action. Selecting the to-be-simulated action path is performed by the Tree Policy. The goal of the policy is to find a balance between exploration and exploitation. Exploration is choosing those actions that have not been sampled much so far. Exploitation is about more extensively searching in the direction of actions you already have high expectations from. 
+\include{sections/tp}
 
-\section{Tree Policies} 
-
-\subsection{UCB1}
-UCB stands for Upper Confidence Bounds. It is one of the most standard and well known method in MCTS. The method involves taking a decision based on exploration (finding new, possible optimal, paths) and exploitation (traversing already well performing paths). With this in mind, possible actions are evaluated with the following formula:
-\begin{equation}
-UCT = \bar{X}_j + 2 C_p\sqrt{\frac{2 \ln n}{n_j}}
-\end{equation}
-Where $j$ is a child node, $\bar{X}_j$ is the estimated value of $j$, $C_p > 0$ a constant, $n$ the amount of visits of the current node and $n_j$ the amount of visits of $j$.
-
-When each value is obtained for all the child nodes, child with the maximum value will be traversed. It can be seen that $C_p$ can be adjusted to lower or increase the amount of exploration used in contrast to the exploitation of the estimated value $\bar{X}_j$.
-
-\subsection{$\mathcal{E}$-Greedy}
-
-Another well known method is the $\epsilon$-Greedy method. Here, the best estimated child is usually visited, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of the $\bar{X}_j$.
-
-\subsection{SoftMax}
-A different approach of the $\epsilon$-Greedy method is SoftMax. Instead of constantly using the same strategy, it uses a variable temperature $\tau$ such that at the start of the algorithm, exploration is preferred and towards the end, exploitation is preferred. 
-
-As such, a child $j$ is visited with probability:
-\begin{equation}
-P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_j}{\tau}}
-\end{equation}
-When $\tau$ is large, $P(j)$ approaches a uniform distribution that is independent on $\bar{X}_j$. When $\tau$ approaches zero, SoftMax becomes more greedy. In this sense, SoftMax is quite similar to the local searcher Simulated Annealing.
+%\include{sections/conclusion}
 
 
 \end{document}
