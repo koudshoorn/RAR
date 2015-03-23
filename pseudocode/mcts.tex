@@ -1,0 +1,22 @@
+\begin{algorithm}
+\begin{algorithmic}[1]
+\Function{MCTS}{$s_0$, $sims$}
+\State create root node $v_0$ with state $s_0$
+\For{$i := 0 \to sims$}
+	UCTSearch($v_0$)
+\EndFor
+\EndFunction
+
+\Function{UCTSearch}{$v$}
+	\State $v := $ TreePolicy($v$)
+	\State $\{r$, terminated$\}$ := SIMULATE($v$)
+	\If{!terminated}\State $delayedr :=$ UCTSearch($v$) 
+	\Else \State $delayedr := 0$
+	\EndIf
+	\State $v$.visits++, $v$.totalReward += $ r + delayedr$ 
+	\State \Return $v$.totalReward
+\EndFunction
+\end{algorithmic}
+\caption{The MCTS Algorithm}
+\label{alg:mcts}
+\end{algorithm}
