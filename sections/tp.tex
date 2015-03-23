@@ -1,23 +1,33 @@
-\section{Tree Policies} 
+\section{Tree Policy}
+
+During the construction of the tree, there is one important decision to make: which path should be traversed? While deciding this at random will certainly give you some knowledge about the structure of the tree, you will not find good moves with certainty, if the amount of simulations is small in comparison with the amount of leafs. Instead it is better to use a bit of intelligence for this decision. This is provided by the Tree Policy. 
+
+One can argue that visiting nodes that you expect to be useful will help grow confidence in your decision. By sampling different scenario's based around similar decisions, you gain more knowledge and are able to determine whether they are truly useful or not. But at the same time, there can be actions which do not seem promising at first, but can turn out to be even more rewarding than any other action. This is a trade-off between exploiting promising actions and exploring less-visited actions.
+
+Every Tree Policy tries to cope with this trade-off. But while the ideas remain the same, the approach can be quite different. As can be seen in the following subsections, where various Tree Policies will be discussed.
 
 \subsection{UCB1}
-UCB stands for Upper Confidence Bounds. It is one of the most standard and well known method in MCTS. The method involves taking a decision based on exploration (finding new, possible optimal, paths) and exploitation (traversing already well performing paths). With this in mind, possible actions are evaluated with the following formula:
+UCB stands for Upper Confidence Bounds. It is probably one of the most well known tree policy in MCTS, together with $\epsilon$-Greedy. For each child node $j$, the importance of visiting that child $Q(j)$ is estimated. This approximation is based on the expected value of the child and how many times this node has been visited in proportion to the other children. When for each child this has been calculated, the one with the highest importance will be chosen for the next visit. 
+
+$Q(j)$ is calculated as follows:
 \begin{equation}
-UCT = \bar{X}_j + 2 C_p\sqrt{\frac{2 \ln n}{n_j}}
+Q(j) = \bar{X}_j + c\sqrt{\frac{2 \ln n}{n_j}}
 \end{equation}
-Where $j$ is a child node, $\bar{X}_j$ is the estimated value of $j$, $C_p > 0$ a constant, $n$ the amount of visits of the current node and $n_j$ the amount of visits of $j$.
+Where $j$ is a child node, $\bar{X}_j$ is the estimated value of $j$, $c > 0$ a constant, $n$ the amount of visits of the current node and $n_j$ the amount of visits of $j$. Notice that $Q(j)$ exists out of two parts: exploitation ($\bar{X}_j$) and exploration ($c\sqrt{\frac{2 \ln n}{n_j}}$). The constant $c$ decides how important exploration is in contrast to exploitation. 
 
 When each value is obtained for all the child nodes, child with the maximum value will be traversed. It can be seen that $C_p$ can be adjusted to lower or increase the amount of exploration used in contrast to the exploitation of the estimated value $\bar{X}_j$.
+
+%TODO discussion
 
 \subsection{$\mathcal{E}$-Greedy}
 
 Another well known method is the $\epsilon$-Greedy method. Here, the best estimated child is usually visited, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of the $\bar{X}_j$.
+%TODO discussion
 
 \subsection{SoftMax}
-A different approach of the $\epsilon$-Greedy method is SoftMax. Instead of constantly using the same strategy, it uses a variable temperature $\tau$ such that at the start of the algorithm, exploration is preferred and towards the end, exploitation is preferred. 
-
-As such, a child $j$ is visited with probability:
+A different approach of the $\epsilon$-Greedy method is SoftMax. However, instead of switching between exploitation an exploration with a certain probability, SoftMax starts of exploring the tree and slowly becomes more focused on promising areas. This behaviour is achieved using a variable temperature $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
 \begin{equation}
 P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_j}{\tau}}
 \end{equation}
-When $\tau$ is large, $P(j)$ approaches a uniform distribution that is independent on $\bar{X}_j$. When $\tau$ approaches zero, SoftMax becomes more greedy. In this sense, SoftMax is quite similar to the local searcher Simulated Annealing.
+When $\forall i$ (child of current node) $\tau >> \bar{X_i}$, $P(j)$ will be independent of $\bar{X_j}$ and thus the decision of visiting a child will be uniformly distributed. On the other hand, when $\tau$ approaches zero, $P(j)$ will approach 1 if $\bar{X_j}$ is the highest of all children, otherwise $P(j)$ will approach 0. In this sense, SoftMax is very focused on exploration when temperature is high and becomes more greedy when temperature decreases. The tricky part of SoftMax is choosing the starting value of $\tau$ how fast $\tau$ decreases. The starting value determines how random your first decisions are and the decrease rate determines how fast you start selecting greedily. 
+%TODO discussion
