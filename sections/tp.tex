@@ -19,7 +19,7 @@ The downside of UCB1 is that there can be occasions where the difference between
 
 Even though UCB1 is intuitively correct, it also has some quirks that are hard to get around. The constant $c$ is sadly not a golden hammer for solving issues that arise from differences between expected rewards. 
 
-\subsection{\egreedy}
+\subsection{\textbf{\egreedy}}
 
 Another well known method is the \egreedy method\cite{barto1998reinforcement}. In contrast to UCB1, which is deterministic, \egreedy uses randomization in order to achieve some exploration. This policy usually selects the child with the highest expected reward, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of $\bar{X}_j$.
 
