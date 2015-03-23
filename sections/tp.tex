@@ -29,8 +29,19 @@ A very straightforward Tree Policy. On the one hand it ensures exploration and e
 \subsection{SoftMax}
 A different approach of the \egreedy method is \soft\cite{barto1998reinforcement}. The difference is that, instead of switching between exploitation an exploration with a certain probability, \soft starts of exploring the tree and slowly becomes more focused on promising areas. This behaviour is achieved using a variable temperature $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
 \begin{equation}
-P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_j}{\tau}}
+P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_b}{\tau}}
 \end{equation}
 When $\forall i$ (child of current node) $\tau >> \bar{X_i}$, $P(j)$ will be independent of $\bar{X_j}$ and thus the decision of visiting a child will be uniformly distributed. On the other hand, when $\tau$ approaches zero, $P(j)$ will approach 1 if $\bar{X_j}$ is the highest of all children, otherwise $P(j)$ will approach 0. In this sense, \soft is very focused on exploration when temperature is high and becomes more greedy when temperature decreases. The tricky part of \soft is choosing the starting value of $\tau$ how fast $\tau$ decreases. The starting value determines how random your first decisions are and the decrease rate determines how fast you start selecting greedily. 
 
 While \soft fulfils the desire of having a smooth transition of exploration to exploitation, it is very domain specific. Since $\tau$ is very dependant on the expected rewards, it is hard to determine what its initial value should be. One needs proper knowledge of what the expected rewards will most likely, before $\tau$ can be decided on. Due to the high need of tuning parameters in \soft, it is not as simple to use as UCB1 or $\epsilon$-Greedy, which is probably also the reason why seems to be less popular.
+
+\subsection{\eroulette} 
+Using the intuition of UCB1, exploration while favouring high rewarding actions, we replaced the random selection method with the ranked roulette selection method. With this selection method, actions are ranked by their performance and this rank decides the proportion they receive of the roulette wheel. The roulette wheel is "spun" and the appointed action is selected.
+
+Arguably this gives an even smaller chance towards actions with a low reward expectation than \egreedy did, but at the same time the follow-up of the highest expected rewards has a better opportunity to be explored. 
+
+\subsection{\rsoft}
+In a similar way, we have tried to remove the ... of the temperature in \soft. From the calculation of $P(j)$ we can see that there is already a roulette wheel being constructed using the expected rewards of the actions. but instead of using the expected reward, we'll be using the rank instead. Thus we get:
+\begin{equation}
+P(j) = \frac{e^\frac{r_j}{\tau}}{\sum_{b=1}^{n} e^\frac{n}{\tau}}
+\end{equation}
