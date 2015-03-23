@@ -1,4 +1,8 @@
 %!Tex root=../report.tex
 
 \section{Methodology}
-We make use of the publicly available framework created by Silver \& Vennes \cite{silver2010monte}. This framework was originally developed to evaluate the performance of MCSTs on games with hidden state, using Partially Observable Monte-Carlo Planning (POMCP).
+
+\subsection{Data}
+We make use of the publicly available framework created by Silver \& Vennes \cite{silver2010monte}. This framework was originally developed to evaluate the performance of MCSTs on games with hidden state, using Partially Observable Monte-Carlo Planning (POMCP). Their framework furthermore contains problem instances for  the POMDP problems \rock and \poc, which form our test set in this research. \\ \\
+\rock represents a Mars rover traveling through a grid (sizes 7x8 and 15x15 in our tests), which has to decide whether or not to travel to, and sample from, rocks for reward. The performance depends on the efficiency with which valuables are found. At each step in \rock, 13 actions are available (\eg sampling, moving). \\ \\
+\poc is a partially observable variation of Pacman, in which the goal is to collect as many pills possible without getting eaten by the moving ghosts (grid sizes: 7x7 and 17x19). A high reward is reserved for collecting all pills, a penalty is incurred for hitting a wall and dying (the latter causes the game to terminate). The state-space sizes of these problems lies between $10^4$ and $10^8$ positions for \rock, and between $10^{11}$ and $10^{18}$ positions for \poc (due to both the large number of pills and the moving ghosts). At each step, four actions are available in \poc.
