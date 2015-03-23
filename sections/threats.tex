@@ -1,0 +1,21 @@
+\section{Threats to Validity}
+The main threats to validity for this paper are the amount of different problems and simulations that have been tested, but also the values of the parameters for each Tree Policy and the quality of the source code. 
+
+\subsection{Amount of problems}
+We have run experiments for two different types of problems (\rock and \poc) with varying sizes. There are however many different domains that MCTS is applicable on. Each domain has its own characteristics and Tree Policies can have a different performance for each of them. This can be concluded from the results of the experiments, most notifiable being \eroulette. In \rock this policy was performing rather well with regard to the other 
+
+
+\include{pseudocode/mcts}
+
+
+\begin{enumerate}
+\item non-optimal parameters for various tree policies. We cannot guarantee that every parameter was chosen for it optimallity. And therefore some tree policies might be closer to their optimum than others. 
+\item The number of different problems is limited. There might be domains or problems where results would be different. As is he case between \rock and \poc. It could be possible that there exist domains where SoftMax is outperformed by the others
+\item 
+\end{enumerate}
+
+beperkt aantal domeinen. 
+Gegis met parameters.
+beperkt aantal simulaties. van een third party te horen gekregen dat prestaties achteruit kunnen gaan bij groot aantal simulaties. 
+nog geen convergentie gezien van performance. 
+we hebben niet alle tree policies vergeleken. Er kunnen betere zijn dan softmax die ook onafhankelijk zijn van het domein
