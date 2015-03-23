@@ -1,49 +1,52 @@
-\section{Tree Policy}
+%!Tex root=../report.tex
+
+\section{Methodology}
+
+\subsection{Test Data}
+We make use of the publicly available framework created by Silver \& Vennes \cite{silver2010monte}. This framework was originally developed to evaluate the performance of MCSTs on games with hidden state, using Partially Observable Monte-Carlo Planning (POMCP). Their framework furthermore contains problem instances for  the POMDP problems \rock and \poc, which form our test set in this research. \\ \\
+\rock represents a Mars rover traveling through a grid (sizes 7x8 and 15x15 in our tests), which has to decide whether or not to travel to, and sample from, rocks for reward. The performance depends on the efficiency with which valuables are found. At each step in \rock, 13 actions are available (\eg sampling, moving). \\ \\
+\poc is a partially observable variation of Pacman, in which the goal is to collect as many pills possible without getting eaten by the moving ghosts (grid sizes: 7x7 and 17x19). A high reward is reserved for collecting all pills, a penalty is incurred for hitting a wall and dying (the latter causes the game to terminate). The state-space sizes of these problems lies between $10^4$ and $10^8$ positions for \rock, and between $10^{11}$ and $10^{18}$ positions for \poc (due to both the large number of pills and the moving ghosts). At each step, four actions are available in \poc.
+
+\subsection{Tree Policies}
 \label{sec:tp}
 
-During the construction of the tree, there is one important decision to make: which path should be traversed? While deciding this at random will certainly give you some knowledge about the structure of the tree, you will not find good moves with certainty, if the amount of simulations is small in comparison with the amount of leafs. Instead it is better to use a bit of intelligence for this decision. This is provided by the Tree Policy\cite{browne2012survey}. 
+During the construction of the simulation tree in UCTSearch as in \ref{alg:mcts}, the most important decision to make is the path to traverse. While deciding this at random will certainly give some insight about the structure of the tree (and thus help support the eventual, greedy, selection), this is unlikely to provide good solutions with certainty, particularly when the amount of simulations is small in comparison to the amount of leafs or the state space is large. The Tree Policy adds direction to this search \cite{browne2012survey}. 
 
-One can argue that visiting nodes that you expect to be useful will help grow confidence in your decision. By sampling different scenario's based around similar decisions, you gain more knowledge and are able to determine whether they are truly useful or not. But at the same time, there can be actions which do not seem promising at first, but can turn out to be even more rewarding than any other action. This is a trade-off between exploiting promising actions and exploring less-visited actions.
+A good tree policy strikes a balance between exploration and exploitation. One may argue that visiting nodes that are expected to be useful will help grow confidence in this decision. By sampling different scenario's based around similar decisions, the algorithm gains more knowledge and is able to determine whether these decisions are truly useful or not. But at the same time, there can be actions which do not seem promising at first, but can turn out to be even more rewarding than any other action. This is a trade-off between exploiting promising actions and exploring less-visited actions. Every Tree Policy tries to cope with this trade-off. But while the idea remains the same, their approaches can be quite different. As our objective is to study the quality and properties of various search approaches on MCTS problems, we study a variety of heuristics which are discussed in this section.
 
-Every Tree Policy tries to cope with this trade-off. But while the idea remains the same, their approaches can be quite different. As can be seen in the following subsections, where various Tree Policies will be discussed.
-
-\subsection{UCB1}
-UCB stands for Upper Confidence Bounds. UCB1 is the simplest of the UCB policies proposed by \cite{auer2002finite}. It is probably one of the most well known tree policies in MCTS, together with $\epsilon$-Greedy. For each child node $j$, the importance of visiting that child $Q(j)$ is estimated. This approximation is based on the expected value of the child and how many times this node has been visited in proportion to the other children. When for each child this has been calculated, the one with the highest importance will be chosen for the next visit. 
-
-$Q(j)$ is calculated as follows:
+\subsubsection{UCB1}
+UCB stands for Upper Confidence Bounds. UCB1 is the simplest of the UCB policies proposed by \cite{auer2002finite} and is probably the most well known tree policy in MCTS, together with $\epsilon$-Greedy. For each child node $j$, the importance of visiting that child $Q(j)$ is estimated as follows:
 \begin{equation}
-Q(j) = \bar{X}_j + c\sqrt{\frac{2 \ln n}{n_j}}
+Q(j) = \bar{X}_j + c\sqrt{\frac{2 \ln N}{n_j}}
 \end{equation}
-Where $j$ is a child node, $\bar{X}_j$ is the estimated value of $j$, $c > 0$ a constant, $n$ the amount of visits of the current node and $n_j$ the amount of visits of $j$. Notice that $Q(j)$ exists out of two parts: exploitation ($\bar{X}_j$) and exploration ($c\sqrt{\frac{2 \ln n}{n_j}}$). The constant $c$ decides how important exploration is in contrast to exploitation. 
+where $\bar{X}_j$ is the average reward from choosing action $j$, $N$ is the total number of times the root node was visited and $n_j$ is the number of times action $j$ was visited. Hence, the left factor stimulates exploitation (prioritize high-reward actions) and the right hand side stimulates exploration (prioritize relatively little visited actions), where the constant $c$ decides how important exploration is in contrast to exploitation. In our experiments, we defaulted to $c=1$. When this value has been computed for each child, the child with the highest importance will be chosen for the next visit. 
 
-The downside of UCB1 is that there can be occasions where the difference between the highest expected reward and the rest is so large that the exploration part of UCB1 can not bridge the gap. A this point, the formula will be completely greedy, while this might not be the best choice. Even though this problem can be invaded by increasing $c$, this will create a different problem in other parts of the tree where expected rewards are closer together. Here UCB1 will only focus on the least visited nodes instead of also slightly favouring promising actions.
+The downside of UCB1 is that there can be occasions where the difference between the highest expected reward and the other rewards is so large that the exploration factor of UCB1 can not bridge the gap. At this point, the formula will behave as if completely greedy, while this may not be the best choice. Even though this problem can be invaded by increasing $c$, this will create a different problem in other parts of the tree where expected rewards are closer together as there UCB1 would only focus on the least visited nodes instead of also slightly favouring promising actions. 
 
-Even though UCB1 is intuitively correct, it also has some quirks that are hard to get around. The constant $c$ is sadly not a golden hammer for solving issues that arise from differences between expected rewards. 
+\subsubsection{$\varepsilon$-Greedy}
+Another well known method is the \egreedy method\cite{barto1998reinforcement}. In contrast to UCB1, which is deterministic, \egreedy uses randomization in order to achieve some exploration. This policy normally selects the child with the highest expected reward, but with a probability $\varepsilon$ a child is selected at random, uniformly, independent of $\bar{X}_j$. Observing a fair degree of robustness to small changes, in our experiments we used $\varepsilon = 0.2$ (see \Cref{subsec:params}).
 
-\subsection{\textbf{\egreedy}}
+This Tree Policy is straightforward, consistently balancing exploration and exploitation in each iteration. Note that it fails to consider that the second or third best actions might be worth exploring more than the worst.
 
-Another well known method is the \egreedy method\cite{barto1998reinforcement}. In contrast to UCB1, which is deterministic, \egreedy uses randomization in order to achieve some exploration. This policy usually selects the child with the highest expected reward, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of $\bar{X}_j$.
-
-A very straightforward Tree Policy. On the one hand it ensures exploration and exploitation at the same time, on the other it does not consider the fact that the second or third best actions might be worth exploring more than the worst. 
-
-\subsection{SoftMax}
+\subsubsection{SoftMax}
 \label{subsec:soft}
-A different approach of the \egreedy method is \soft\cite{barto1998reinforcement}. The difference is that, instead of switching between exploitation an exploration with a certain probability, \soft starts of exploring the tree and slowly becomes more focused on promising areas. This behaviour is achieved using a variable temperature $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
+A different approach of the \egreedy method is \soft\cite{barto1998reinforcement}. The difference is that, instead of switching between exploitation an exploration with a certain probability, \soft starts with a high degree of exploration and steadily becomes more focused on promising areas. This behaviour is achieved by using a variable \emph{temperature} $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
 \begin{equation}
 P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_b}{\tau}}
 \end{equation}
-When $\forall i$ (child of current node) $\tau >> \bar{X_i}$, $P(j)$ will be independent of $\bar{X_j}$ and thus the decision of visiting a child will be uniformly distributed. On the other hand, when $\tau$ approaches zero, $P(j)$ will approach 1 if $\bar{X_j}$ is the highest of all children, otherwise $P(j)$ will approach 0. In this sense, \soft is very focused on exploration when temperature is high and becomes more greedy when temperature decreases. The tricky part of \soft is choosing the starting value of $\tau$ how fast $\tau$ decreases. The starting value determines how random your first decisions are and the decrease rate determines how fast you start selecting greedily. 
+When for each child $i$, $\tau \gg \bar{X_i}$, $P(j)$ will be nearly independent of $\bar{X_j}$ and thus the decision of visiting a child will be uniformly distributed. On the other hand, when $\tau$ approaches zero, $P(j)$ will approach 1 if $\bar{X_j}$ is the highest of all children and 0 otherwise. In this sense, \soft is very focused on exploration when temperature is high and becomes more greedy when temperature decreases. The tricky part of \soft is choosing the starting value of $\tau$ how fast $\tau$ decreases. The starting value determines how random your first decisions are and the decrease rate determines how fast you start selecting greedily. 
 
-While \soft fulfils the desire of having a smooth transition of exploration to exploitation, it is very domain specific. Since $\tau$ is very dependant on the expected rewards, it is hard to determine what its initial value should be. One needs proper knowledge of what the expected rewards will most likely, before $\tau$ can be decided on. Due to the high need of tuning parameters in \soft, it is not as simple to use as UCB1 or $\epsilon$-Greedy, which is probably also the reason why seems to be less popular.
+While \soft fulfills the desire of having a smooth transition of exploration to exploitation, the choice of parameters depends strongly on characteristics of the problem at hand. In particular, as the algorithm must initially be insensitive to any of the rewards, $\tau$ must by necessity be initialized to a value at least as high as the highest reward, if not several times higher. Furthermore, the final value of $\tau$ (typically between 0 and 1) and the type of decrease (linear or exponential) impact the performance as well. Indeed, we found widely varying degrees of performance for seemingly subtle variations in the start and end value of $\tau$. Due to this high need of tuning parameters in \soft, it is not as simple to use as UCB1 or $\epsilon$-Greedy, which may be the reason why it appears to be less popular.
 
-\subsection{\eroulette} 
+The following two algorithms were constructed following results of our initial evaluation and their rationale is discussed in \Cref{sec:eval}.
+
+\subsubsection{$\varepsilon$-Roulette}
 \label{subsec:roulette}
-Using the intuition of UCB1, exploration while favouring high rewarding actions, we replaced the random selection method with the ranked roulette selection method. With this selection method, actions are ranked by their performance and this rank decides the proportion they receive of the roulette wheel. The roulette wheel is "spun" and the appointed action is selected.
+Using the intuition of UCB1, preserving a degree of exploration while favoring high-reward actions, we replaced the random selection method with the ranked roulette selection method. With this selection method, actions are ranked by their performance (with respect to their siblings) and this rank decides the proportion they receive of the roulette wheel. The roulette wheel is "spun" and the appointed action is selected. Arguably this gives an even smaller chance towards actions with a low reward expectation than \egreedy did, but at the same time the second-best action has a better chance to being explored. 
 
-Arguably this gives an even smaller chance towards actions with a low reward expectation than \egreedy did, but at the same time the follow-up of the highest expected rewards has a better opportunity to be explored. 
-
-\subsection{\rsoft}
-In a similar way, we have tried to remove the ... of the temperature in \soft. From the calculation of $P(j)$ we can see that there is already a roulette wheel being constructed using the expected rewards of the actions. but instead of using the expected reward, we'll be using the rank instead. Thus we get:
+\subsubsection{R-SoftMax}
+We furthermore seek to remove the dependency of the temperature parameter in \soft on the problem characteristics. From the calculation of $P(j)$ we can see that there is already a roulette wheel being constructed using the expected rewards of the actions. Rather than using the expected rewards, however, we propose to use their ranks ($r_j$) in comparison to the action values of their siblings. Formula 2 then becomes:
 \begin{equation}
 P(j) = \frac{e^\frac{r_j}{\tau}}{\sum_{b=1}^{n} e^\frac{n}{\tau}}
 \end{equation}
+
