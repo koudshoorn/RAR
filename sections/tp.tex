@@ -1,13 +1,13 @@
 \section{Tree Policy}
 
-During the construction of the tree, there is one important decision to make: which path should be traversed? While deciding this at random will certainly give you some knowledge about the structure of the tree, you will not find good moves with certainty, if the amount of simulations is small in comparison with the amount of leafs. Instead it is better to use a bit of intelligence for this decision. This is provided by the Tree Policy. 
+During the construction of the tree, there is one important decision to make: which path should be traversed? While deciding this at random will certainly give you some knowledge about the structure of the tree, you will not find good moves with certainty, if the amount of simulations is small in comparison with the amount of leafs. Instead it is better to use a bit of intelligence for this decision. This is provided by the Tree Policy\cite{browne2012survey}. 
 
 One can argue that visiting nodes that you expect to be useful will help grow confidence in your decision. By sampling different scenario's based around similar decisions, you gain more knowledge and are able to determine whether they are truly useful or not. But at the same time, there can be actions which do not seem promising at first, but can turn out to be even more rewarding than any other action. This is a trade-off between exploiting promising actions and exploring less-visited actions.
 
-Every Tree Policy tries to cope with this trade-off. But while the ideas remain the same, the approach can be quite different. As can be seen in the following subsections, where various Tree Policies will be discussed.
+Every Tree Policy tries to cope with this trade-off. But while the idea remains the same, their approaches can be quite different. As can be seen in the following subsections, where various Tree Policies will be discussed.
 
 \subsection{UCB1}
-UCB stands for Upper Confidence Bounds. It is probably one of the most well known tree policy in MCTS, together with $\epsilon$-Greedy. For each child node $j$, the importance of visiting that child $Q(j)$ is estimated. This approximation is based on the expected value of the child and how many times this node has been visited in proportion to the other children. When for each child this has been calculated, the one with the highest importance will be chosen for the next visit. 
+UCB stands for Upper Confidence Bounds. UCB1 is the simplest of the UCB policies proposed by \cite{auer2002finite}. It is probably one of the most well known tree policies in MCTS, together with $\epsilon$-Greedy. For each child node $j$, the importance of visiting that child $Q(j)$ is estimated. This approximation is based on the expected value of the child and how many times this node has been visited in proportion to the other children. When for each child this has been calculated, the one with the highest importance will be chosen for the next visit. 
 
 $Q(j)$ is calculated as follows:
 \begin{equation}
@@ -15,19 +15,21 @@ Q(j) = \bar{X}_j + c\sqrt{\frac{2 \ln n}{n_j}}
 \end{equation}
 Where $j$ is a child node, $\bar{X}_j$ is the estimated value of $j$, $c > 0$ a constant, $n$ the amount of visits of the current node and $n_j$ the amount of visits of $j$. Notice that $Q(j)$ exists out of two parts: exploitation ($\bar{X}_j$) and exploration ($c\sqrt{\frac{2 \ln n}{n_j}}$). The constant $c$ decides how important exploration is in contrast to exploitation. 
 
-When each value is obtained for all the child nodes, child with the maximum value will be traversed. It can be seen that $C_p$ can be adjusted to lower or increase the amount of exploration used in contrast to the exploitation of the estimated value $\bar{X}_j$.
+The downside of UCB1 is that there can be occasions where the difference between the highest expected reward and the rest is so large that the exploration part of UCB1 can not bridge the gap. A this point, the formula will be completely greedy, while this might not be the best choice. Even though this problem can be invaded by increasing $c$, this will create a different problem in other parts of the tree where expected rewards are closer together. Here UCB1 will only focus on the least visited nodes instead of also slightly favouring promising actions.
 
-%TODO discussion
+Even though UCB1 is intuitively correct, it also has some quirks that are hard to get around. The constant $c$ is sadly not a golden hammer for solving issues that arise from differences between expected rewards. 
 
 \subsection{$\mathcal{E}$-Greedy}
 
-Another well known method is the $\epsilon$-Greedy method. Here, the best estimated child is usually visited, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of the $\bar{X}_j$.
-%TODO discussion
+Another well known method is the $\epsilon$-Greedy method\cite{barto1998reinforcement}. In contrast to UCB1, which is deterministic, $\epsilon$-Greedy uses randomization in order to achieve some exploration. This policy usually selects the child with the highest expected reward, but with a probability $\epsilon$ a child is selected at random, uniformly, independent of $\bar{X}_j$.
+
+A very straightforward Tree Policy. On the one hand it ensures exploration and exploitation at the same time, on the other it does not consider the fact that the second or third best actions might be worth exploring more than the worst. 
 
 \subsection{SoftMax}
-A different approach of the $\epsilon$-Greedy method is SoftMax. However, instead of switching between exploitation an exploration with a certain probability, SoftMax starts of exploring the tree and slowly becomes more focused on promising areas. This behaviour is achieved using a variable temperature $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
+A different approach of the $\epsilon$-Greedy method is SoftMax\cite{barto1998reinforcement}. The difference is that, instead of switching between exploitation an exploration with a certain probability, SoftMax starts of exploring the tree and slowly becomes more focused on promising areas. This behaviour is achieved using a variable temperature $\tau$. Together with the expected value of each child $j$, the probability $P(j)$ that $j$ is selected to be simulated is calculated as follows:  
 \begin{equation}
 P(j) = \frac{e^\frac{\bar{X}_j}{\tau}}{\sum_{b=1}^{n} e^\frac{\bar{X}_j}{\tau}}
 \end{equation}
 When $\forall i$ (child of current node) $\tau >> \bar{X_i}$, $P(j)$ will be independent of $\bar{X_j}$ and thus the decision of visiting a child will be uniformly distributed. On the other hand, when $\tau$ approaches zero, $P(j)$ will approach 1 if $\bar{X_j}$ is the highest of all children, otherwise $P(j)$ will approach 0. In this sense, SoftMax is very focused on exploration when temperature is high and becomes more greedy when temperature decreases. The tricky part of SoftMax is choosing the starting value of $\tau$ how fast $\tau$ decreases. The starting value determines how random your first decisions are and the decrease rate determines how fast you start selecting greedily. 
-%TODO discussion
+
+While SoftMax fulfils the desire of having a smooth transition of exploration to exploitation, it is very domain specific. Since $\tau$ is very dependant on the expected rewards, it is hard to determine what its initial value should be. One needs proper knowledge of what the expected rewards will most likely, before $\tau$ can be decided on. Due to the high need of tuning parameters in SoftMax, it is not as simple to use as UCB1 or $\epsilon$-Greedy, which is probably also the reason why seems to be less popular.
