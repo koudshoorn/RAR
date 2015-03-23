@@ -12,7 +12,7 @@ The success of MCTS methods in Go, as well as its general formulation \cite{chas
 We propose to investigate a number of alternative tree search heuristics in order to derive properties of the search tree in general and qualities that good heuristics should posses. We evaluate the heuristics on small and large instances of two problems: \rock and \poc (static environment, $10^4 - 10^7$ states \vs dynamic environment, $10^{11} - 10^{18}$ states). These problems fall into the category of games with partially observable state, meaning that in general only a belief about the state of the game is known. We identify four main results:
 \vspace{-4mm}
 \begin{enumerate}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
-\item A greedy strategy is poorly equipped when many decision points are present.
+\item A greedy strategy is poorly equipped when many actions can be chosen.
 \item Greater state-spaces necessitate increasingly greedy investigation.
 \item ~\soft yields superior performance by connecting the degree of exploration to the total number of simulations.
 \item ~\rsoft (our novel variation on \soft) sacrifices little performance in favor of broader applicability to \soft by disregarding the values of rewards used in favor of their ordering.
