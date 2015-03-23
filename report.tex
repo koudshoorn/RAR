@@ -3,16 +3,28 @@
 \usepackage{algorithm}
 \usepackage[noabbrev]{cleveref}
 \usepackage[noend]{algpseudocode}
+\usepackage{epstopdf}
 
-\newcommand{\ie}{\emph{i.e.}~}
-\newcommand{\eg}{\emph{e.g.}~}
-\newcommand{\vs}{\emph{v.s.}~}
-\newcommand{\rock}{\hbox{\textsc{rocksample}}~}
-\newcommand{\poc}{\hbox{\textsc{pocman}}~}
-\newcommand{\egreedy}{\hbox{$\varepsilon$-\textsc{greedy}}~}
-\newcommand{\eroulette}{\hbox{$\varepsilon$-\textsc{roulette}}~}
-\newcommand{\soft}{\hbox{\textsc{softmax}}~}
-\newcommand{\rsoft}{\hbox{\textsc{r-softmax}}~}
+\usepackage{framed}
+
+\usepackage{xspace}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\vs}{\emph{v.s.}\xspace}
+\newcommand{\rock}{\hbox{\textsc{rocksample}}\xspace}
+\newcommand{\poc}{\hbox{\textsc{pocman}}\xspace}
+\newcommand{\egreedy}{\hbox{$\varepsilon$-\textsc{greedy}}\xspace}
+\newcommand{\eroulette}{\hbox{$\varepsilon$-\textsc{roulette}}\xspace}
+\newcommand{\soft}{\hbox{\textsc{softmax}}\xspace}
+\newcommand{\rsoft}{\hbox{\textsc{r-softmax}}\xspace}
+
+\newcommand{\RS}[2]{%
+\begin{framed}%
+\filbreak
+	%\noindent
+\textbf{Result {#1}:~}{\emph {#2}}%
+\end{framed}
+}
 
 \begin{document}
 
@@ -81,6 +93,8 @@ Kaj Oudshoorn \\
 \input{sections/tp}
 
 \input{sections/setup}
+
+\input{sections/results}
 
 \input{sections/threats}
 
