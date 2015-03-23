@@ -27,10 +27,10 @@ Roughly the inverse of UCB1's performance holds for \egreedy. In particular, \eg
 \RS{2}{Greater state-spaces necessitate increasingly greedy investigation.}
 
 \begin{figure*}[ht!]
-\includegraphics[width=.5\linewidth,height=.3\linewidth]{rocksample78b.eps}
-\includegraphics[width=.5\linewidth,height=.3\linewidth]{rocksample1515b.eps}
-\includegraphics[width=.5\linewidth,height=.3\linewidth]{pocman77b.eps}
-\includegraphics[width=.5\linewidth,height=.3\linewidth]{pocman1719b.eps}
+\includegraphics[width=.5\linewidth,height=.29\linewidth]{rocksample78b.eps}
+\includegraphics[width=.5\linewidth,height=.29\linewidth]{rocksample1515b.eps}
+\includegraphics[width=.5\linewidth,height=.29\linewidth]{pocman77b.eps}
+\includegraphics[width=.5\linewidth,height=.29\linewidth]{pocman1719b.eps}
 \caption{Comparison of \soft to the two proposed variations: \rsoft and \eroulette, on the two \rock instances and the two \poc instances. Note the log-scale on the x-axis, reflecting the increase in simulations. 95\% confidence intervals are indicated on each plot point.}
 \label{fig:results2}
 \end{figure*}
@@ -40,7 +40,7 @@ In general, \soft performed best of the tested heuristics. \soft employs a tempe
 
 \RS{3}{\soft yields superior performance by connecting the degree of exploration to the total number of simulations.}
 
-As was noted in \Cref{subsec:soft}, \soft suffers from the need to manually configure the $\tau$ parameter (both start and end value), as well as the rate of decrease of the temperature. We found that this parameter was very sensitive to the actual values of actions that were present in the problem, \eg for \poc a much higher initial value was needed than in \poc as different branches of the search tree yielded potentially widely varying rewards. This creates a strong dependency on the specified rewards for each action, which in turn also adds overhead to the application of this heuristic to a new domain.
+As was noted in \Cref{subsec:soft}, \soft suffers from the need to manually configure the $\tau$ parameter (both start and end value), as well as the rate of decrease of the temperature. We found that this parameter was very sensitive to the actual values of actions that were present in the problem, \eg for \poc a much higher initial value was needed than in \rock as different branches of the search tree yielded widely varying rewards. This strong dependency on the specified rewards for each action adds overhead to the application of this heuristic to a new domain.
 
 We propose a variation to \soft named \rsoft. In this algorithm, we replace each reward with its \emph{rank} in the ordered list of rewards of all children of the current node under consideration. As such, the algorithm is substantially more robust to the absolute rewards chosen. We propose to initialize $\tau$ to the number of distinct actions present, as this will start the algorithm with a high degree of random exploration. We furthermore found that the resulting algorithm is fairly robust with respect to the final value of $\tau$ and suggest setting this to $1/4$. The results are shown in \Cref{fig:results2}. As can be seen, \rsoft almost consistently performs as well as \soft (which was hand-tuned on each instance), with the exception of \rock 15x15. Future work may further investigate extensions.
 
