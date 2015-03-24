@@ -53,8 +53,8 @@
 
 \section*{Criteria for the lab report}
 \begin{enumerate}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
-\item The problem is properly introduced, a little more motivation would be welcome in transitioning from paragraph 3 to 4 in the introduction (\eg stipulate that we do not always have priorities in practice but would still like good performance guarantees). 
-\item The description of used methods is elaborate and rather comprehensive, additionally adding pseudocode for all the important operations. Only minor issues were encountered (see Detailed Feedback below).
+\item The problem is properly introduced, though it is encouraged to explain what the drawbacks of trees and heaps are and how treaps improve. Also, a little more motivation would be welcome in transitioning from paragraph 3 to 4 in the introduction (\eg stipulate that we do not always have priorities in practice but would still like good performance guarantees). 
+\item The description of used methods is elaborate and rather comprehensive, additionally adding pseudocode for all the important operations. Apart from the fact that it is unclear whether said operations were invented by them or obtained through some source, only minor issues were encountered (see Detailed Feedback below).
 \item The experimental evaluation of the different research goals was consistently conducted on a wide variety of treap sizes and aggregated over a large number of samples. The visual representation, though in general clear, was sometimes lacking; particularly Figure 5 and 7, as well as the use of points rather than density plots in Figures 2-4 (see detailed comments).
 \item Analysis of results was conducted based on the experimental evaluation and was predominantly visual in nature, concluding results based on visual evidence. Tests for statistical significance were often missing (see first Main point for improvement above), raising questions about certain results (primarily on G4 and G5 and some concerns on G1-G3).
 \item The analysis of Monte Carlo performance is well done regarding insert and delete operations, showing strong confidence bounds that confirm the theoretical results. Analysis of outliers in terms of performance is mostly missing, as is a similar analysis for the other operation pairs.
@@ -79,12 +79,15 @@
 \textbf{Page 6, Result of G6:~} The discrepancy between ``a rather constant trend" and ``indicates clearly" causes some concern; has strength of the correlation been statistically quantified? It would help to add violin plots for each treap size instead of points, as this would more accurately represent the density of different heights within each treap size. \\ \\
 \textbf{Some typos:} ~\\
 - Please add a substantial amount of punctuation, commas in particular, to support readability. \\
+- The emphasis on operations enhances readability, but is sadly sometimes forgotten (like in 2.1.1: "Find is implemented...) \\
 \textbf{Abstract}: ``design en execute" $\to$ "and" \\
-\textbf{Page 1, right column, paragraph 1}: ``... is independent on the" $\to$ ``independent of"
+\textbf{Page 1, right column, paragraph 1}: ``... is independent on the" $\to$ ``independent of" \\
+\textbf{Page 1, 2.1.1}: ``... is outlined Algorithm 1." $\to$ ``... is outlined in Algorithm 1" \\
 \textbf{Related work}: ``This ensures that \underline{a} storing the ..." \\
-\textbf{Page 2, left column, paragraph 2}: ``... a similar mechanic." $\to$ ``mechanism".
+\textbf{Page 2, left column, paragraph 2}: ``... a similar mechanic." $\to$ ``mechanism". \\
+\textbf{Page 2, left column, paragraph 2}: ``First is finds ..." $\to$ ``First it finds ...". \\
 \textbf{Page 2, right column, paragraph 2}: ``... as it's pseudocode ..." $\to$ ``... as its pseudocode ..." \\
-\textbf{Page 3, right column, Proof of Theorem 1}: ``All games exists of" $\to$ ``... consist of".
+\textbf{Page 3, right column, Proof of Theorem 1}: ``All games exists of" $\to$ ``... consist of". \\
 \textbf{Page 4, G1, G2, G3}: ``... show the ..." $\to$ ``... show that the ..." \\
 \textbf{Page 4, 3.2, paragraph 2}: ``... and \underline{use} insert these" \\
 \textbf{Page 5, last paragraph \& page 6, first paragraph}: the use of $e - 4$ (or 3) for powers of 10 is confusing, consider using \verb+\mbox{\sc{e}-}21+ to achieve: $\mbox{\sc{e}-}21$ \\
