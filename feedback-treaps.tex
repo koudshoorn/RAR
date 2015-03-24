@@ -1,0 +1,93 @@
+\ProvidesClass{UGentCourse}[2011/07/28 v1.0 UGentCourse]
+
+\DeclareOption{english}{\AtEndOfClass{\main@language{english}}}
+\DeclareOption{dutch}{\AtEndOfClass{\main@language{dutch}}}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{book}}
+
+\ProcessOptions\relax
+
+
+\RequirePackage[dutch, english]{babel}
+
+\documentclass[11pt,a4paper,oneside,fleqn]{article}
+\usepackage{geometry}
+\geometry{verbose, a4paper, tmargin=2.5cm, bmargin=2.5cm, lmargin=2.2cm, rmargin=2.2cm}
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{amsmath,amsthm}
+\usepackage{latexsym}
+\usepackage{mathrsfs}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{program}
+
+%\renewcommand{\qedsymbol}{Q.E.D.}
+\newcommand\abs[1]{\left\lvert#1\right\rvert}
+\newcommand{\ie}{\emph{i.e.}~}
+\newcommand{\eg}{\emph{e.g.}~}
+\begin{document}
+
+\title{Peer Feedback: Randomized Treaps}
+\author{Vincent Hellendoorn - 4091302}
+\maketitle
+
+\section*{Main strengths}
+\begin{itemize}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex,leftmargin=+7mm]
+\item[+] The authors cover six different performance guarantees in both theory and elaborate experimental evaluation, making a strong case for the efficiency of the randomized treap data structure.
+\item[+] The authors give a comprehensive description of the different operations in the algorithm's implementation.
+\end{itemize}
+
+\section*{Main points for improvement}
+\begin{itemize}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex,leftmargin=+7mm]
+\item[-] Evidence in favor of the theoretical results holding on the experimental data is typically defended through plots, whereas tests for significance are frequently missing. Suggest adding these to strengthen the case of the paper.
+\item[-] Proofs of theorems 2 and 3 are overly concise. The paper may benefit from more elaboration.
+\end{itemize}
+
+\section*{Criteria for the lab report}
+\begin{enumerate}[topsep=0pt,itemsep=-1ex,partopsep=1ex,parsep=1ex]
+\item The problem is properly introduced, a little more motivation would be welcome in transitioning from paragraph 3 to 4 in the introduction (\eg stipulate that we do not always have priorities in practice but would still like good performance guarantees). 
+\item The description of used methods is elaborate and rather comprehensive, additionally adding pseudocode for all the important operations. Only minor issues were encountered (see Detailed Feedback below).
+\item The experimental evaluation of the different research goals was consistently conducted on a wide variety of treap sizes and aggregated over a large number of samples. The visual representation, though in general clear, was sometimes lacking; particularly Figure 5 and 7, as well as the use of points rather than density plots in Figures 2-4 (see detailed comments).
+\item Analysis of results was conducted based on the experimental evaluation and was predominantly visual in nature, concluding results based on visual evidence. Tests for statistical significance were often missing (see first Main point for improvement above), raising questions about certain results (primarily on G4 and G5 and some concerns on G1-G3).
+\item The analysis of Monte Carlo performance is well done regarding insert and delete operations, showing strong confidence bounds that confirm the theoretical results. Analysis of outliers in terms of performance is mostly missing, as is a similar analysis for the other operation pairs.
+\item Discussion of the benefit of randomization for the problem is mostly implicit from the results; a comparison to non-random treap performance is missing.
+\end{enumerate}
+
+\subsection*{Detailed Feedback}
+\textbf{Page 2, Algorithm 1:~} explicit null-checking suggests Java and doesn't fit pseudocode. Consider using more abstract syntax, as was well done in Algorithm 2. \\
+\textbf{Page 2, Subsection 2.1.2, paragraph 1:~} the paper is a little inconsistent in using ``treap" (5 times) and ``tree" (4 times) here; I assume ``treap" is correct. \\
+\textbf{Page 3, Algorithm 5:~} similar to comment on Algorithm 1, explicit use of `this' (and thereby the first function) suggests OO programming style and can be removed in favor of abstraction. \\
+\textbf{Page 3, Algorithm 5:~} does the algorithm need explicit passing of \verb+newRoot+ to \verb+Join+ \footnote{compare: http://www.cs.cmu.edu/$\sim$scandal/papers/treaps-spaa98.pdf}? \\
+\textbf{Page 3, Theorem 1:~} minor note on point 2: the original proof shows that this expected number is less than 2, ``at most'' causes some confusion when talking about expected values. \\
+\textbf{Page 3, Theorem 1:~} the proof here is a bit confusing: first Mulmuley games are (roughly) introduced, then a property of treaps is proven and finally the proof using Mulmuley games is omitted in favor of a reference. If at all possible, I suggest including the original proof (in a condensed version perhaps) here after all. Furthermore, please move the `ancestor' proof to a corollary result. \\ 
+\textbf{Page 4, proof of Theorem 3:~} consider briefly defining $N$. \\
+\textbf{Page 4, Subsection 3.2, paragraph 1:~} a theorem is not validated experimentally (although it may be supported empirically): suggest using ``confirm" instead. Applies for the rest of the paper. \\
+\textbf{Page 5, Section 4.1 and Figures 2-4:~} by normalizing by $\log(n)$, the paper creates a dependency on the results of G5: G1-G3 are concerned with these operations being of $O(h)$, and at this point in the paper it is not established whether the height of the tree is indeed $O(\log(n))$. As we learn later, this (sort of) holds, but it would support the integrity of the presented results to normalize by the height of the tree in each simulation. \\
+\textbf{Page 5, Results of Figure 2:~} suggest making use of Java's nanoseconds functionality, as well as running the algorithm for a number of simulations before starting measurements (`burn-in time' to reduce overhead of JVM's memory allocation) to reduce both possible confounds mentioned. \\
+\textbf{Page 5, Figure 5:~} suggest using histograms instead; particularly the boxplot of the delete operation offers little insight into the true distribution over the number rotations. \\
+\textbf{Page 5, right column, last paragraph:~} ``78\% of the insertions require less than 2 operations, ...", should be ``no more than 2 ..." \\
+\textbf{Page 6, Results of G4:~} the confidence intervals of the lines at the right side of Figures 2 and 3 appear not to overlap, potentially contradicting this result. Please add evaluation of significance. \\
+\textbf{Page 6, Result of G5:~} The result is clear, I just suggest reporting the standard deviations in both categories (and perhaps running a test for normality on the MinMax results) to provide more insight into the performance. Furthermore, suggest scaling the y-axis to the fraction of occurrences, as the ``density'' label also suggests. \\
+\textbf{Page 6, Result of G6:~} The discrepancy between ``a rather constant trend" and ``indicates clearly" causes some concern; has strength of the correlation been statistically quantified? It would help to add violin plots for each treap size instead of points, as this would more accurately represent the density of different heights within each treap size. \\ \\
+\textbf{Some typos:} ~\\
+- Please add a substantial amount of punctuation, commas in particular, to support readability. \\
+\textbf{Abstract}: ``design en execute" $\to$ "and" \\
+\textbf{Page 1, right column, paragraph 1}: ``... is independent on the" $\to$ ``independent of"
+\textbf{Related work}: ``This ensures that \underline{a} storing the ..." \\
+\textbf{Page 2, left column, paragraph 2}: ``... a similar mechanic." $\to$ ``mechanism".
+\textbf{Page 2, right column, paragraph 2}: ``... as it's pseudocode ..." $\to$ ``... as its pseudocode ..." \\
+\textbf{Page 3, right column, Proof of Theorem 1}: ``All games exists of" $\to$ ``... consist of".
+\textbf{Page 4, G1, G2, G3}: ``... show the ..." $\to$ ``... show that the ..." \\
+\textbf{Page 4, 3.2, paragraph 2}: ``... and \underline{use} insert these" \\
+\textbf{Page 5, last paragraph \& page 6, first paragraph}: the use of $e - 4$ (or 3) for powers of 10 is confusing, consider using \verb+\mbox{\sc{e}-}21+ to achieve: $\mbox{\sc{e}-}21$ \\
+\textbf{Page 6, Subsection 4.2, paragraph 1}: "... with \underline{a} 1000".
+
+\end{document}
